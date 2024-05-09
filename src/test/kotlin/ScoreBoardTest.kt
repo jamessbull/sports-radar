@@ -18,7 +18,7 @@ class ScoreBoardTest {
         val scoreBoard = emptyScoreBoard()
             .startGame(Home(england), Away(germany))
         val expectedGame = Game(Home(england), Away(germany), Score(0, 0))
-        assertThat(scoreBoard.getGameFor(Home(england)), equalTo(expectedGame))
+        assertThat(scoreBoard.getGameFor(england), equalTo(expectedGame))
     }
 
     @Test
@@ -97,13 +97,25 @@ class ScoreBoardTest {
             .startGame(Home(germany), Away(england))
             .startGame(Home(brazil), Away(italy))
 
-        val actualBrazilGame = scoreBoard.getGameFor(Home(brazil))
+        val actualBrazilGame = scoreBoard.getGameFor(brazil)
         val expectedBrazilGame = Game(Home(brazil), Away(italy), Score(0, 0))
         assertThat(actualBrazilGame, equalTo(expectedBrazilGame))
 
-        val actualGermanyGame = scoreBoard.getGameFor(Home(germany))
+        val actualGermanyGame = scoreBoard.getGameFor(germany)
         val expectedGermanyGame = Game(Home(germany), Away(england), Score(0, 0))
         assertThat(actualGermanyGame, equalTo(expectedGermanyGame))
+    }
+
+    @Test
+    fun `can update scores`() {
+        val scoreBoard = emptyScoreBoard()
+            .startGame(Home(germany), Away(england))
+            .startGame(Home(brazil), Away(italy))
+            .updateScore(brazil, Score(2,1))
+            .updateScore(england, Score(0,10))
+
+        assertThat(scoreBoard.getGameFor(brazil), equalTo(Game(Home(brazil), Away(italy), Score(2, 1))))
+        assertThat(scoreBoard.getGameFor(england), equalTo(Game(Home(germany), Away(england), Score(0, 10))))
     }
 
     private fun assertFailure(result: Result<ScoreBoard>, message: String) {

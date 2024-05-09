@@ -15,8 +15,13 @@ class ScoreBoard(private val games: List<Game>) {
         }
     }
 
-    fun getGameFor(homeTeam: Home) =
-        games.find { it.home == homeTeam } ?: throw RuntimeException("no game for $homeTeam")
+    fun getGameFor(team: FootballTeam) = games.single { it.home.team == team || it.away.team == team }
+
+    fun updateScore(team: FootballTeam, score: Score): ScoreBoard {
+        val otherGames = games.filter { !it.features(team) }
+        val newGame = games.single { it.features(team) }.copy(score = score)
+        return ScoreBoard(otherGames + newGame)
+    }
 
     companion object {
         fun emptyScoreBoard() = ScoreBoard(emptyList())
