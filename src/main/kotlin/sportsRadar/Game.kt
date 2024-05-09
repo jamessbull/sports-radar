@@ -3,6 +3,9 @@ package sportsRadar
 import sportsRadar.Score.Companion.initialScore
 
 data class Game(val home: Home, val away: Away, val score: Score) {
+    init {
+        if(home.team == away.team) throw RuntimeException("${home.team.name} can not play themselves")
+    }
 
     fun features(team: FootballTeam) = home.team == team || away.team == team
 
