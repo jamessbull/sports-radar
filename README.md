@@ -22,3 +22,7 @@ I have also assumed that where operations do not appear to make a lot of sense I
 It may be acceptable to silently do nothing if you try to start two games at once but similarly it might be something 
 you want to know about. I would discuss requirements for edge cases to figure out what was best. I think though that we 
 should try for some sort of visibility in the event of unexpected operation of the system.
+
+I have assumed that teams can be uniquely identified by their names. If this assumption turned out to be untrue you would 
+add an id which is a guid so you could distinguish teams with the same name.
+
