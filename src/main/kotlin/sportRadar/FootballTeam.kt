@@ -1,3 +1,3 @@
-package sportsRadar
+package sportRadar
 
 data class FootballTeam(val name: String)

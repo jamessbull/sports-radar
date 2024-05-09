@@ -1,9 +1,9 @@
-import sportsRadar.ScoreBoard.Companion.emptyScoreBoard
+import sportRadar.ScoreBoard.Companion.emptyScoreBoard
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
-import sportsRadar.*
+import sportRadar.*
 
 class ScoreBoardTest {
 

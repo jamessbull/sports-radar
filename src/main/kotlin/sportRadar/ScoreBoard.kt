@@ -1,6 +1,6 @@
-package sportsRadar
+package sportRadar
 
-import sportsRadar.Game.Companion.newGame
+import sportRadar.Game.Companion.newGame
 
 class ScoreBoard(private val games: List<Game>) {
     fun startGame(home: Home, away: Away): ScoreBoard {

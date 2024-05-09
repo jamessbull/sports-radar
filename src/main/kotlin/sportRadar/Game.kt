@@ -1,6 +1,6 @@
-package sportsRadar
+package sportRadar
 
-import sportsRadar.Score.Companion.initialScore
+import sportRadar.Score.Companion.initialScore
 
 data class Game(val home: Home, val away: Away, val score: Score) {
     init {

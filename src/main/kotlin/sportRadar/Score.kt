@@ -1,4 +1,4 @@
-package sportsRadar
+package sportRadar
 
 data class Score(val homeGoals: Int, val awayGoals: Int) {
     companion object {
