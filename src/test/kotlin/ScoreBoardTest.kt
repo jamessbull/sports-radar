@@ -6,10 +6,10 @@ import sportsRadar.*
 
 class ScoreBoardTest {
 
-    val england = FootballTeam("England")
-    val germany = FootballTeam("Germany")
-    val homeTeam = Home(england)
-    val awayTeam = Away(germany)
+    private val england = FootballTeam("England")
+    private val germany = FootballTeam("Germany")
+    private val homeTeam = Home(england)
+    private val awayTeam = Away(germany)
 
     @Test
     fun `can start a new game on an empty scoreboard`() {
