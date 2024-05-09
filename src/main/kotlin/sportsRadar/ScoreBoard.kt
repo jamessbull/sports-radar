@@ -15,7 +15,7 @@ class ScoreBoard(private val games: List<Game>) {
         }
     }
 
-    fun getGameFor(team: FootballTeam) = games.single { it.home.team == team || it.away.team == team }
+    fun getGameFor(team: FootballTeam) = games.single { it.features(team) }
 
     fun updateScore(team: FootballTeam, score: Score): ScoreBoard {
         val otherGames = games.filter { !it.features(team) }
