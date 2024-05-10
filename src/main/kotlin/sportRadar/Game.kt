@@ -12,6 +12,8 @@ data class Game(val matchStartTime: LocalDateTime, val home: Home, val away: Awa
 
     companion object {
         fun newGame(clock: Clock, home: Home, away: Away) = Game(clock.now(), home, away, initialScore())
-        fun summaryOrder(): Comparator<Game> = compareBy<Game> { it.score.total() }.reversed()
+        fun summaryOrder(): Comparator<Game> = compareBy<Game> { it.score.total() }
+            .thenComparing { g -> g.matchStartTime }
+            .reversed()
     }
 }

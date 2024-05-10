@@ -1,7 +1,6 @@
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Assertions.fail
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import sportRadar.*
 import sportRadar.ScoreBoard.Companion.emptyScoreBoard
@@ -203,10 +202,9 @@ class ScoreBoardTest {
         )))
     }
 
-    @Disabled("Still needs fixing")
     @Test
     fun `when all scores are the same then the games are ordered by date time`() {
-        val scoreBoard = emptyScoreBoard(TestClock(listOf(LocalDateTime.now())))
+        val scoreBoard = emptyScoreBoard(testClock)
             .startGame(Home(germany), Away(england))
             .startGame(Home(brazil), Away(italy))
 
