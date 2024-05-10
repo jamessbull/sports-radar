@@ -2,7 +2,10 @@
 
 ## TLDR
 If you want to jump straight to the acceptance test which captures the scenario described in the test then you want the 
-last test in the file ScoreBoardTest
+last test in the file ScoreBoardTest.
+
+I was not able to complete this test in a single session due school runs / bedtimes / work. So I did a bit last night, 
+a bit this morning and a bit before lunch. I hope that's ok.
 
 ## Approach
 
