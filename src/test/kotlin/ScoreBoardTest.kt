@@ -133,9 +133,48 @@ class ScoreBoardTest {
 
     }
 
+    @Test
+    fun `can finish all games that have been started and nobody has scored by either team`() {
+        val scoreBoard = emptyScoreBoard()
+            .startGame(Home(germany), Away(england))
+            .finishGame(england)
+            .startGame(Home(brazil), Away(italy))
+            .finishGame(brazil)
+
+        assertThat(scoreBoard, equalTo(emptyScoreBoard()))
+    }
+
+    @Test
+    fun `can finish a single game that has been started and some teams have scored`() {
+        val scoreBoard = emptyScoreBoard()
+            .startGame(Home(germany), Away(england))
+            .updateScore(england, Score(1, 2))
+            .startGame(Home(brazil), Away(italy))
+            .updateScore(england, Score(1,3))
+            .finishGame(england)
+            .updateScore(brazil, Score(2,1))
+
+        assertThat(scoreBoard, equalTo(ScoreBoard(
+            listOf(
+                Game(Home(brazil), Away(italy), Score(2, 1))
+            )
+        )))
+    }
+
+    @Test
+    fun `can not finish a game that is not on the scoreboard`() {
+        val result = runCatching {
+            emptyScoreBoard()
+                .startGame(Home(germany), Away(england))
+                .finishGame(italy)
+        }
+
+        assertFailure(result, "Can not finish ${italy.name} game. Game has not started.")
+    }
+
     private fun assertFailure(result: Result<ScoreBoard>, message: String) {
         result
-            .onSuccess { fail("Should not be able to start two games for the same team") }
+            .onSuccess { fail("Error message should be '$message' but request succeeded.") }
             .onFailure {
                 assertThat(it.message, equalTo(message))
             }
