@@ -2,7 +2,7 @@
 
 ## Approach
 
-I have decided to take an approach with this where I do not use mutation and instead return new objects for everything.
+I have decided to take a more functional approach with this where I do not use mutation and instead return new objects for everything.
 I believe this makes it easier to reason about what is happening because you start with one state at the beginning and 
 have another state at the end and it will not be updated while you use it.
 
