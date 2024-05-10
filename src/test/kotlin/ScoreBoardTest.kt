@@ -22,21 +22,20 @@ class ScoreBoardTest {
         now.plusHours(3),
         now.plusHours(4)
     )
-
-
+    private val testClock = TestClock(testTimes)
 
     @Test
     fun `can start a new game on an empty scoreboard`() {
-        val scoreBoard = emptyScoreBoard(TestClock(testTimes))
+        val scoreBoard = emptyScoreBoard(testClock)
             .startGame(Home(england), Away(germany))
-        val expectedGame = Game(Home(england), Away(germany), Score(0, 0))
+        val expectedGame = Game(testTimes[0], Home(england), Away(germany), Score(0, 0))
         assertThat(scoreBoard.getGameFor(england), equalTo(expectedGame))
     }
 
     @Test
     fun `a team can not play itself`() {
         val result = runCatching {
-            emptyScoreBoard(TestClock(testTimes))
+            emptyScoreBoard(testClock)
                 .startGame(Home(england), Away(england))
         }
         assertFailure(result, "${england.name} can not play themselves")
@@ -45,7 +44,7 @@ class ScoreBoardTest {
     @Test
     fun `can not start two identical games`() {
         val result = runCatching {
-            emptyScoreBoard(TestClock(testTimes))
+            emptyScoreBoard(testClock)
                 .startGame(Home(england), Away(germany))
                 .startGame(Home(england), Away(germany))
         }
@@ -56,7 +55,7 @@ class ScoreBoardTest {
     fun `can not start a game where the home team is already playing away`() {
         val brazil = FootballTeam("Brazil")
         val result = runCatching {
-            emptyScoreBoard(TestClock(testTimes))
+            emptyScoreBoard(testClock)
                 .startGame(Home(brazil), Away(england))
                 .startGame(Home(england), Away(germany))
         }
@@ -69,7 +68,7 @@ class ScoreBoardTest {
     fun `can not start a game where the home team is already playing at home`() {
         val brazil = FootballTeam("Brazil")
         val result = runCatching {
-            emptyScoreBoard(TestClock(testTimes))
+            emptyScoreBoard(testClock)
                 .startGame(Home(brazil), Away(england))
                 .startGame(Home(brazil), Away(germany))
         }
@@ -82,7 +81,7 @@ class ScoreBoardTest {
     fun `can not start a game where the away team is already playing at home`() {
         val brazil = FootballTeam("Brazil")
         val result = runCatching {
-            emptyScoreBoard(TestClock(testTimes))
+            emptyScoreBoard(testClock)
                 .startGame(Home(germany), Away(england))
                 .startGame(Home(brazil), Away(germany))
         }
@@ -94,7 +93,7 @@ class ScoreBoardTest {
     @Test
     fun `can not start a game where the away team is already playing away`() {
         val result = runCatching {
-            emptyScoreBoard(TestClock(testTimes))
+            emptyScoreBoard(testClock)
                 .startGame(Home(germany), Away(england))
                 .startGame(Home(brazil), Away(england))
         }
@@ -105,22 +104,22 @@ class ScoreBoardTest {
 
     @Test
     fun `can start multiple games when all teams are different`() {
-        val scoreBoard = emptyScoreBoard(TestClock(testTimes))
+        val scoreBoard = emptyScoreBoard(testClock)
             .startGame(Home(germany), Away(england))
             .startGame(Home(brazil), Away(italy))
 
         val actualBrazilGame = scoreBoard.getGameFor(brazil)
-        val expectedBrazilGame = Game(Home(brazil), Away(italy), Score(0, 0))
+        val expectedBrazilGame = Game(testTimes[1], Home(brazil), Away(italy), Score(0, 0))
         assertThat(actualBrazilGame, equalTo(expectedBrazilGame))
 
         val actualGermanyGame = scoreBoard.getGameFor(germany)
-        val expectedGermanyGame = Game(Home(germany), Away(england), Score(0, 0))
+        val expectedGermanyGame = Game(testTimes[0], Home(germany), Away(england), Score(0, 0))
         assertThat(actualGermanyGame, equalTo(expectedGermanyGame))
     }
 
     @Test
     fun `can update scores`() {
-        val scoreBoard = emptyScoreBoard(TestClock(testTimes))
+        val scoreBoard = emptyScoreBoard(testClock)
             .startGame(Home(germany), Away(england))
             .startGame(Home(brazil), Away(italy))
             .updateScore(brazil, Score(2,1))
@@ -129,14 +128,14 @@ class ScoreBoardTest {
             .updateScore(england, Score(0,12))
             .updateScore(england, Score(0,13))
 
-        assertThat(scoreBoard.getGameFor(brazil), equalTo(Game(Home(brazil), Away(italy), Score(2, 1))))
-        assertThat(scoreBoard.getGameFor(england), equalTo(Game(Home(germany), Away(england), Score(0, 13))))
+        assertThat(scoreBoard.getGameFor(brazil), equalTo(Game(testTimes[1], Home(brazil), Away(italy), Score(2, 1))))
+        assertThat(scoreBoard.getGameFor(england), equalTo(Game(testTimes[0], Home(germany), Away(england), Score(0, 13))))
     }
 
     @Test
     fun `can not update score for a game that has not started`() {
         val result = runCatching {
-            emptyScoreBoard(TestClock(testTimes))
+            emptyScoreBoard(testClock)
                 .startGame(Home(germany), Away(england))
                 .updateScore(brazil, Score(2,1))
         }
@@ -147,18 +146,18 @@ class ScoreBoardTest {
 
     @Test
     fun `can finish all games that have been started and nobody has scored by either team`() {
-        val scoreBoard = emptyScoreBoard(TestClock(testTimes))
+        val scoreBoard = emptyScoreBoard(testClock)
             .startGame(Home(germany), Away(england))
             .finishGame(england)
             .startGame(Home(brazil), Away(italy))
             .finishGame(brazil)
 
-        assertThat(scoreBoard, equalTo(emptyScoreBoard(TestClock(listOf(LocalDateTime.now())))))
+        assertThat(scoreBoard, equalTo(emptyScoreBoard(testClock)))
     }
 
     @Test
     fun `can finish a single game that has been started and some teams have scored`() {
-        val scoreBoard = emptyScoreBoard(TestClock(listOf(LocalDateTime.now())))
+        val scoreBoard = emptyScoreBoard(testClock)
             .startGame(Home(germany), Away(england))
             .updateScore(england, Score(1, 2))
             .startGame(Home(brazil), Away(italy))
@@ -166,10 +165,10 @@ class ScoreBoardTest {
             .finishGame(england)
             .updateScore(brazil, Score(2,1))
 
-        assertThat(scoreBoard, equalTo(ScoreBoard(
+        assertThat(scoreBoard, equalTo(ScoreBoard(testClock,
             listOf(
-                Game(Home(brazil), Away(italy), Score(2, 1))
-            )
+                Game(testTimes[1], Home(brazil), Away(italy), Score(2, 1))
+            ),
         )))
     }
 
@@ -189,7 +188,7 @@ class ScoreBoardTest {
         val mexico = FootballTeam("Mexico")
         val canada = FootballTeam("Canada")
 
-        val scoreBoard = emptyScoreBoard(TestClock(testTimes))
+        val scoreBoard = emptyScoreBoard(testClock)
             .startGame(Home(germany), Away(england))
             .startGame(Home(brazil), Away(italy))
             .startGame(Home(mexico), Away(canada))
@@ -198,13 +197,13 @@ class ScoreBoardTest {
             .updateScore(mexico, Score(3, 2))
 
         assertThat(scoreBoard.summary(), equalTo(listOf(
-            Game(Home(mexico), Away(canada), Score(3, 2)),
-            Game(Home(brazil), Away(italy), Score(2, 2)),
-            Game(Home(germany), Away(england), Score(1, 2)),
+            Game(testTimes[2], Home(mexico), Away(canada), Score(3, 2)),
+            Game(testTimes[1], Home(brazil), Away(italy), Score(2, 2)),
+            Game(testTimes[0], Home(germany), Away(england), Score(1, 2)),
         )))
     }
 
-    @Disabled("No clock yet!")
+    @Disabled("Still needs fixing")
     @Test
     fun `when all scores are the same then the games are ordered by date time`() {
         val scoreBoard = emptyScoreBoard(TestClock(listOf(LocalDateTime.now())))
@@ -212,8 +211,8 @@ class ScoreBoardTest {
             .startGame(Home(brazil), Away(italy))
 
         assertThat(scoreBoard.summary(), equalTo(listOf(
-            Game(Home(brazil), Away(italy), Score(0, 0)),
-            Game(Home(germany), Away(england), Score(0, 0))
+            Game(testTimes[1], Home(brazil), Away(italy), Score(0, 0)),
+            Game(testTimes[0], Home(germany), Away(england), Score(0, 0))
         )))
     }
 

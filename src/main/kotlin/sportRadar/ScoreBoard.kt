@@ -2,10 +2,10 @@ package sportRadar
 
 import sportRadar.Game.Companion.newGame
 
-data class ScoreBoard(private val games: List<Game>) {
+data class ScoreBoard(private val clock: Clock, val games: List<Game>) {
     fun startGame(home: Home, away: Away): ScoreBoard {
         throwIfAlreadyPlaying(listOf(home.team, away.team))
-        return ScoreBoard(games + newGame(home, away))
+        return ScoreBoard(clock, games + newGame(clock, home, away))
     }
 
     fun getGameFor(team: FootballTeam) = games.single { it.features(team) }
@@ -14,14 +14,14 @@ data class ScoreBoard(private val games: List<Game>) {
         val existingGame = runCatching { getGameFor(team) }
             .onFailure { throw RuntimeException("Can not update score for ${team.name} game. Game has not started.") }
             .getOrThrow()
-        return ScoreBoard(otherGames(team) + existingGame.copy(score = score))
+        return ScoreBoard(clock,otherGames(team) + existingGame.copy(score = score))
     }
 
     fun finishGame(team: FootballTeam): ScoreBoard {
         runCatching { getGameFor(team) }.onFailure {
             throw RuntimeException("Can not finish ${team.name} game. Game has not started.")
         }
-        return ScoreBoard(otherGames(team))
+        return ScoreBoard(clock, otherGames(team))
     }
 
     fun summary() = games.sortedWith(Game.summaryOrder())
@@ -36,6 +36,6 @@ data class ScoreBoard(private val games: List<Game>) {
     private fun otherGames(team: FootballTeam) = games.filter { !it.features(team) }
 
     companion object {
-        fun emptyScoreBoard(clock: Clock) = ScoreBoard(emptyList())
+        fun emptyScoreBoard(clock: Clock) = ScoreBoard(clock, emptyList())
     }
 }
