@@ -1,9 +1,10 @@
-import sportRadar.ScoreBoard.Companion.emptyScoreBoard
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import sportRadar.*
+import sportRadar.ScoreBoard.Companion.emptyScoreBoard
 
 class ScoreBoardTest {
 
@@ -189,6 +190,19 @@ class ScoreBoardTest {
             Game(Home(mexico), Away(canada), Score(3, 2)),
             Game(Home(brazil), Away(italy), Score(2, 2)),
             Game(Home(germany), Away(england), Score(1, 2)),
+        )))
+    }
+
+    @Disabled("No clock yet!")
+    @Test
+    fun `when all scores are the same then the games are ordered by date time`() {
+        val scoreBoard = emptyScoreBoard()
+            .startGame(Home(germany), Away(england))
+            .startGame(Home(brazil), Away(italy))
+
+        assertThat(scoreBoard.summary(), equalTo(listOf(
+            Game(Home(brazil), Away(italy), Score(0, 0)),
+            Game(Home(germany), Away(england), Score(0, 0))
         )))
     }
 
