@@ -214,6 +214,38 @@ class ScoreBoardTest {
         )))
     }
 
+    @Test
+    fun `when some games have equal score then those games are ordered by match start time otherwise in total score order`() {
+
+        val argentina = FootballTeam("Argentina")
+        val australia = FootballTeam("Australia")
+        val mexico = FootballTeam("Mexico")
+        val canada = FootballTeam("Canada")
+        val spain = FootballTeam("Spain")
+        val france = FootballTeam("France")
+        val uruguay = FootballTeam("Uruguay")
+
+        val scoreBoard = emptyScoreBoard(testClock)
+            .startGame(Home(mexico), Away(canada))
+            .startGame(Home(spain), Away(brazil))
+            .startGame(Home(germany), Away(france))
+            .startGame(Home(uruguay), Away(italy))
+            .startGame(Home(argentina), Away(australia))
+            .updateScore(mexico, Score(0, 5))
+            .updateScore(spain, Score(10, 2))
+            .updateScore(germany, Score(2, 2))
+            .updateScore(uruguay, Score(6, 6))
+            .updateScore(argentina, Score(3, 1))
+
+        assertThat(scoreBoard.summary(), equalTo(listOf(
+            Game(testTimes[3], Home(uruguay), Away(italy), Score(6, 6)),
+            Game(testTimes[1], Home(spain), Away(brazil), Score(10, 2)),
+            Game(testTimes[0], Home(mexico), Away(canada), Score(0, 5)),
+            Game(testTimes[4], Home(argentina), Away(australia), Score(3, 1)),
+            Game(testTimes[2], Home(germany), Away(france), Score(2, 2))
+        )))
+    }
+
     private fun assertFailure(result: Result<ScoreBoard>, message: String) {
         result
             .onSuccess { fail("Error message should be '$message' but request succeeded.") }

@@ -1,8 +1,13 @@
 # Sportradar
 
+## TLDR
+If you want to jump straight to the acceptance test which captures the scenario described in the test then you want the 
+last test in the file ScoreBoardTest
+
 ## Approach
 
-I have decided to take a more functional approach with this where I do not use mutation and instead return new objects for everything.
+I have decided to take a more functional approach with this where I do not use mutation and instead return new objects 
+for everything.
 I believe this makes it easier to reason about what is happening because you start with one state at the beginning and 
 have another state at the end and it will not be updated while you use it.
 
@@ -11,6 +16,31 @@ from this library and introduce another class that would hold a scoreboard and m
 locking on both read and write operations. This would guarantee correctness but would carry a performance penalty which
 would need to be evaluated.
 
+For the unit tests you will notice that I have kept all tests at the level of the scoreboard when some of the tests 
+could be at the individual class level. For example I could easily test the ordering of games separately.
+My reasons for doing this are that although there end up being quite a few tests in the test for the scoreboard class
+it does not seem unmanageable and by targeting tests at the functional level it leaves us free to refactor the code 
+underneath with ease without having to worry about tests for each class or moving them around etc. With the tests at the
+scoreboard level giving us confidence we have not broken anything. 
+
+I have found in the past that when you have tests for every method of every class those tests can be brittle and 
+lead to refactoring becoming more difficult. This is not an argument for omitting tests more for seeing tests as part of 
+an executable specification which where possible should match up closely with the requirements. In an ideal world one 
+should be able to take the same tests and apply them to an entirely different implemenation of the same thing and they 
+should still work. I acknowledge that this is not always possible in practice.
+
+Of course there are scenarios where the number of possible cases means that you have to have tests at a different level
+and in those circumstances that is obviously what I would do. I would use either mocking or stubbing depending on what 
+sort of test I am writing. In a case like this I would use a test clock rather than mock it out but for external systems 
+I would be more tempted to mock it as we might want to be very explicit about how we interact with it.
+
+I would have external tests as well and do tests against external systems including databases but these would 
+clearly not be in the unit test build. End to end tests can also be useful as can ui only tests. In the most recent 
+project I worked on I separated out the api layer by making every endpoint use an Action class so you could have requests
+from the browser go directly to the real api but have that backed by entirely programmable actions. That allowed me to 
+have fast browser tests that were easy to setup and also checked that the url definitions matched between js and backend. 
+I then had end to end tests which did not use the browser but fired of http requests directly to the real api with a 
+real set of actions behind it.
 
 ## Assumptions
 
