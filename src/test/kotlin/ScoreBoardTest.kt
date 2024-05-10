@@ -172,6 +172,26 @@ class ScoreBoardTest {
         assertFailure(result, "Can not finish ${italy.name} game. Game has not started.")
     }
 
+    @Test
+    fun `when all score totals are different then summary is ordered by total score descending`() {
+        val mexico = FootballTeam("Mexico")
+        val canada = FootballTeam("Canada")
+
+        val scoreBoard = emptyScoreBoard()
+            .startGame(Home(germany), Away(england))
+            .startGame(Home(brazil), Away(italy))
+            .startGame(Home(mexico), Away(canada))
+            .updateScore(germany, Score(1, 2))
+            .updateScore(brazil, Score(2, 2))
+            .updateScore(mexico, Score(3, 2))
+
+        assertThat(scoreBoard.summary(), equalTo(listOf(
+            Game(Home(mexico), Away(canada), Score(3, 2)),
+            Game(Home(brazil), Away(italy), Score(2, 2)),
+            Game(Home(germany), Away(england), Score(1, 2)),
+        )))
+    }
+
     private fun assertFailure(result: Result<ScoreBoard>, message: String) {
         result
             .onSuccess { fail("Error message should be '$message' but request succeeded.") }

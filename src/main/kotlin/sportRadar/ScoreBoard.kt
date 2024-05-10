@@ -31,6 +31,11 @@ data class ScoreBoard(private val games: List<Game>) {
         }
     }
     private fun otherGames(team: FootballTeam) = games.filter { !it.features(team) }
+    fun summary(): List<Game> {
+        return games.sortedWith(Game.summaryOrder())
+    }
+
+
 
     companion object {
         fun emptyScoreBoard() = ScoreBoard(emptyList())
