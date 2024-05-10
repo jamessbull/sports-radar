@@ -8,6 +8,15 @@ class ScoreBoard(private val games: List<Game>) {
         return ScoreBoard(games + newGame(home, away))
     }
 
+    fun getGameFor(team: FootballTeam) = games.single { it.features(team) }
+
+    fun updateScore(team: FootballTeam, score: Score): ScoreBoard {
+        val existingGame = runCatching { getGameFor(team) }
+            .onFailure { throw RuntimeException("Can not update score for ${team.name} game. Game has not started.") }
+            .getOrThrow()
+        return ScoreBoard(otherGames(team) + existingGame.copy(score = score))
+    }
+
     private fun throwIfAlreadyPlaying(teams: List<FootballTeam>) {
         teams.forEach { team ->
             if (games.any { game -> game.features(team) })
@@ -15,13 +24,7 @@ class ScoreBoard(private val games: List<Game>) {
         }
     }
 
-    fun getGameFor(team: FootballTeam) = games.single { it.features(team) }
-
-    fun updateScore(team: FootballTeam, score: Score): ScoreBoard {
-        val otherGames = games.filter { !it.features(team) }
-        val newGame = games.single { it.features(team) }.copy(score = score)
-        return ScoreBoard(otherGames + newGame)
-    }
+    private fun otherGames(team: FootballTeam) = games.filter { !it.features(team) }
 
     companion object {
         fun emptyScoreBoard() = ScoreBoard(emptyList())

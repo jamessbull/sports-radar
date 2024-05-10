@@ -118,6 +118,18 @@ class ScoreBoardTest {
         assertThat(scoreBoard.getGameFor(england), equalTo(Game(Home(germany), Away(england), Score(0, 10))))
     }
 
+    @Test
+    fun `can not update score for a game that has not started`() {
+        val result = runCatching {
+            emptyScoreBoard()
+                .startGame(Home(germany), Away(england))
+                .updateScore(brazil, Score(2,1))
+        }
+
+        assertFailure(result, "Can not update score for ${brazil.name} game. Game has not started.")
+
+    }
+
     private fun assertFailure(result: Result<ScoreBoard>, message: String) {
         result
             .onSuccess { fail("Should not be able to start two games for the same team") }
