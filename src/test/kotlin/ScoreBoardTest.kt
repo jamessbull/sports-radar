@@ -113,9 +113,12 @@ class ScoreBoardTest {
             .startGame(Home(brazil), Away(italy))
             .updateScore(brazil, Score(2,1))
             .updateScore(england, Score(0,10))
+            .updateScore(england, Score(0,11))
+            .updateScore(england, Score(0,12))
+            .updateScore(england, Score(0,13))
 
         assertThat(scoreBoard.getGameFor(brazil), equalTo(Game(Home(brazil), Away(italy), Score(2, 1))))
-        assertThat(scoreBoard.getGameFor(england), equalTo(Game(Home(germany), Away(england), Score(0, 10))))
+        assertThat(scoreBoard.getGameFor(england), equalTo(Game(Home(germany), Away(england), Score(0, 13))))
     }
 
     @Test
