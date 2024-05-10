@@ -24,18 +24,16 @@ data class ScoreBoard(private val games: List<Game>) {
         return ScoreBoard(otherGames(team))
     }
 
+    fun summary() = games.sortedWith(Game.summaryOrder())
+
     private fun throwIfAlreadyPlaying(teams: List<FootballTeam>) {
         teams.forEach { team ->
             if (games.any { game -> game.features(team) })
                 throw RuntimeException("Can not start two games at once for team ${team.name}")
         }
     }
+
     private fun otherGames(team: FootballTeam) = games.filter { !it.features(team) }
-    fun summary(): List<Game> {
-        return games.sortedWith(Game.summaryOrder())
-    }
-
-
 
     companion object {
         fun emptyScoreBoard() = ScoreBoard(emptyList())
